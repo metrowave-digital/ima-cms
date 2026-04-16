@@ -24,6 +24,7 @@ import { Courses } from './collections/Courses'
 import { Members } from './collections/Members'
 import { FestivalSubmissions } from './collections/FestivalSubmissions'
 import { AwardsSubmissions } from './collections/AwardsSubmissions'
+import { Profiles } from './collections/Profiles'
 
 /* -------------------------
  * HERITAGE BALL
@@ -148,6 +149,7 @@ export default buildConfig({
     FestivalSubmissions,
     AwardsSubmissions,
     BallCategories,
+    Profiles,
   ],
 
   /* ---- GLOBALS ---- */

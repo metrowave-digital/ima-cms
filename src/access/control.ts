@@ -3,7 +3,7 @@ import type { Access, PayloadRequest } from 'payload'
 import {
   ROLE_LIST,
   ROLE_RANKING,
-  type FWCRole,
+  type IMARole,
   userHasRole,
   hasRoleAtLeast as baseHasRoleAtLeast,
 } from './roles'
@@ -17,22 +17,24 @@ export function isLoggedIn(req: PayloadRequest): boolean {
 }
 
 /**
- * Get ALL roles from the authenticated user.
- * Ensures a clean FWCRole[] array.
+ * Get the single role from the authenticated user.
+ * Ensures it maps to a valid IMARole.
  */
-export function getUserRoles(req: PayloadRequest): FWCRole[] {
-  const roles = Array.isArray(req.user?.roles) ? req.user.roles : []
-  return roles.filter((r): r is FWCRole => ROLE_LIST.includes(r as FWCRole))
+export function getUserRole(req: PayloadRequest): IMARole | null {
+  const role = req.user?.role as IMARole | undefined
+  if (role && ROLE_LIST.includes(role)) {
+    return role
+  }
+  return null
 }
 
 /**
  * Check if user has at least the required role within the role hierarchy.
- * Supports multi-role users.
  */
-export function hasRoleAtLeast(req: PayloadRequest, minimum: FWCRole): boolean {
-  const roles = getUserRoles(req)
-  if (roles.length === 0) return false
-  return roles.some((role) => ROLE_RANKING[role] <= ROLE_RANKING[minimum])
+export function hasRoleAtLeast(req: PayloadRequest, minimum: IMARole): boolean {
+  const role = getUserRole(req)
+  if (!role) return false
+  return ROLE_RANKING[role] <= ROLE_RANKING[minimum]
 }
 
 /**
@@ -53,24 +55,24 @@ export const loggedIn: Access = ({ req }) => isLoggedIn(req)
 
 export const isAdmin: Access = ({ req }) => hasRoleAtLeast(req, 'admin') || isAdminRoute(req)
 
-/** Only admin, pastor, leader, staff */
+/** Only admin, pastor, leader, creator, staff */
 export const staffOnly: Access = ({ req }) => hasRoleAtLeast(req, 'staff') || isAdminRoute(req)
 
-/** Instructors + leaders + pastors + admin */
+/** Instructors + leaders + pastors + admin + creators */
 export const instructorsOnly: Access = ({ req }) =>
   hasRoleAtLeast(req, 'instructor') || isAdminRoute(req)
 
-/** Mentors + leaders + pastors + admin */
+/** Mentors + higher level roles */
 export const mentorsOnly: Access = ({ req }) => hasRoleAtLeast(req, 'mentor') || isAdminRoute(req)
 
 /**
- * Utility: allow only specific roles (multi-role safe)
+ * Utility: allow only specific roles
  */
-export function allowRoles(roles: FWCRole[]): Access {
+export function allowRoles(roles: IMARole[]): Access {
   return ({ req }) => {
     if (isAdminRoute(req)) return true
-    const userRoles = getUserRoles(req)
-    return userRoles.some((r) => roles.includes(r))
+    const userRole = getUserRole(req)
+    return userRole !== null && roles.includes(userRole)
   }
 }
 
@@ -96,21 +98,26 @@ export async function getCurrentProfileId(
   const user = req.user
   if (!user) return
 
-  // If populated as ID
+  // If populated as ID directly on user
   if (typeof user.profile === 'string' || typeof user.profile === 'number') {
     return user.profile
   }
 
-  // Otherwise lookup
-  const result = await req.payload.find({
-    collection: 'profiles',
-    depth: 0,
-    where: { user: { equals: user.id } },
-    limit: 1,
-  })
+  // Otherwise lookup in a 'profiles' collection
+  try {
+    const result = await req.payload.find({
+      collection: 'profiles',
+      depth: 0,
+      where: { user: { equals: user.id } },
+      limit: 1,
+    })
 
-  const id = result.docs[0]?.id
-  if (typeof id === 'string' || typeof id === 'number') return id
+    const id = result.docs[0]?.id
+    if (typeof id === 'string' || typeof id === 'number') return id
+  } catch (error) {
+    // Fails gracefully if 'profiles' collection doesn't exist in IMA yet
+    return undefined
+  }
 }
 
 /**

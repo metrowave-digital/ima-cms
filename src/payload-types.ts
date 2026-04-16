@@ -78,6 +78,8 @@ export interface Config {
     members: Member;
     'festival-submissions': FestivalSubmission;
     'awards-submissions': AwardsSubmission;
+    'ball-categories': BallCategory;
+    profiles: Profile;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,6 +98,8 @@ export interface Config {
     members: MembersSelect<false> | MembersSelect<true>;
     'festival-submissions': FestivalSubmissionsSelect<false> | FestivalSubmissionsSelect<true>;
     'awards-submissions': AwardsSubmissionsSelect<false> | AwardsSubmissionsSelect<true>;
+    'ball-categories': BallCategoriesSelect<false> | BallCategoriesSelect<true>;
+    profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -145,8 +149,23 @@ export interface User {
   id: number;
   firstName?: string | null;
   lastName?: string | null;
-  role?: ('admin' | 'student' | 'creator' | 'member') | null;
+  role?:
+    | (
+        | 'admin'
+        | 'pastor'
+        | 'leader'
+        | 'creator'
+        | 'instructor'
+        | 'mentor'
+        | 'staff'
+        | 'volunteer'
+        | 'member'
+        | 'student'
+        | 'viewer'
+      )
+    | null;
   avatarId?: string | null;
+  profile?: (number | null) | Profile;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -164,6 +183,50 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profiles".
+ */
+export interface Profile {
+  id: number;
+  /**
+   * The user account associated with this profile.
+   */
+  user: number | User;
+  /**
+   * If unchecked, this profile will not appear in the public member directory.
+   */
+  isPublic?: boolean | null;
+  /**
+   * e.g., Independent Filmmaker | Media Student at FWC
+   */
+  headline?: string | null;
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  location?: string | null;
+  portfolioUrl?: string | null;
+  socialLinks?: {
+    linkedin?: string | null;
+    instagram?: string | null;
+    twitter?: string | null;
+    vimeo?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -415,6 +478,48 @@ export interface AwardsSubmission {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ball-categories".
+ */
+export interface BallCategory {
+  id: number;
+  /**
+   * e.g., Best Dressed Spectator - Archives, FF Realness Duo: FQ & Drag
+   */
+  title: string;
+  group: 'grand-prize' | 'fashion' | 'realness' | 'beauty-appeal' | 'performance' | 'runway';
+  prizeAmount?: number | null;
+  trophyCount?: number | null;
+  /**
+   * Note: Duos cannot be in the same house for each duo category.
+   */
+  isDuoCategory?: boolean | null;
+  /**
+   * Explain the aesthetic, theme, or cultural significance expected for this category.
+   */
+  description?: string | null;
+  /**
+   * Detail any specific breakdowns (e.g., Women vs FQ vs Drag vs Legend) or multi-part rules (e.g., Part 1 Production, Part 2 Crowning).
+   */
+  requirements?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -480,6 +585,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'awards-submissions';
         value: number | AwardsSubmission;
+      } | null)
+    | ({
+        relationTo: 'ball-categories';
+        value: number | BallCategory;
+      } | null)
+    | ({
+        relationTo: 'profiles';
+        value: number | Profile;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -532,6 +645,7 @@ export interface UsersSelect<T extends boolean = true> {
   lastName?: T;
   role?: T;
   avatarId?: T;
+  profile?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -742,6 +856,43 @@ export interface AwardsSubmissionsSelect<T extends boolean = true> {
   awardCategory?: T;
   rationale?: T;
   supportingDocuments?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ball-categories_select".
+ */
+export interface BallCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  group?: T;
+  prizeAmount?: T;
+  trophyCount?: T;
+  isDuoCategory?: T;
+  description?: T;
+  requirements?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profiles_select".
+ */
+export interface ProfilesSelect<T extends boolean = true> {
+  user?: T;
+  isPublic?: T;
+  headline?: T;
+  bio?: T;
+  location?: T;
+  portfolioUrl?: T;
+  socialLinks?:
+    | T
+    | {
+        linkedin?: T;
+        instagram?: T;
+        twitter?: T;
+        vimeo?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

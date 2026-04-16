@@ -2,9 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
-  auth: true, // <--- REQUIRED for the Payload Admin UI to boot
+  auth: true,
   fields: [
-    // Note: Payload automatically adds 'email' and 'password' fields when auth is true.
     {
       name: 'firstName',
       type: 'text',
@@ -16,12 +15,34 @@ export const Users: CollectionConfig = {
     {
       name: 'role',
       type: 'select',
-      options: ['admin', 'student', 'creator', 'member'],
+      // Combine IMA and your expanded roles here:
+      options: [
+        'admin',
+        'pastor',
+        'leader',
+        'creator',
+        'instructor',
+        'mentor',
+        'staff',
+        'volunteer',
+        'member',
+        'student',
+        'viewer',
+      ],
       defaultValue: 'student',
     },
     {
       name: 'avatarId',
       type: 'text',
+    },
+    {
+      name: 'profile',
+      type: 'relationship',
+      relationTo: 'profiles',
+      hasMany: false,
+      admin: {
+        position: 'sidebar',
+      },
     },
   ],
 }

@@ -1,11 +1,11 @@
 // src/access/roles.ts
-
 import type { PayloadRequest } from 'payload'
 
-export type FWCRole =
+export type IMARole =
   | 'admin'
   | 'pastor'
   | 'leader'
+  | 'creator'
   | 'instructor'
   | 'mentor'
   | 'staff'
@@ -14,10 +14,11 @@ export type FWCRole =
   | 'student'
   | 'viewer'
 
-export const ROLE_LIST: FWCRole[] = [
+export const ROLE_LIST: IMARole[] = [
   'admin',
   'pastor',
   'leader',
+  'creator',
   'instructor',
   'mentor',
   'staff',
@@ -29,38 +30,38 @@ export const ROLE_LIST: FWCRole[] = [
 
 /**
  * Role hierarchy — LOWER number = HIGHER authority
- * admin (0) is top
- * viewer (9) is bottom
+ * Adjust these numbers if you want certain roles to outrank others!
  */
-export const ROLE_RANKING: Record<FWCRole, number> = {
+export const ROLE_RANKING: Record<IMARole, number> = {
   admin: 0,
   pastor: 1,
   leader: 2,
-  instructor: 3,
-  mentor: 4,
-  staff: 5,
-  volunteer: 6,
-  member: 7,
-  student: 8,
-  viewer: 9,
+  creator: 3,
+  instructor: 4,
+  mentor: 5,
+  staff: 6,
+  volunteer: 7,
+  member: 8,
+  student: 9,
+  viewer: 10,
 }
 
 /**
- * Check if the user has ANY of the listed roles
+ * Check if the user's single role is included in the allowed list
  */
-export function userHasRole(req: PayloadRequest, roles: FWCRole[]): boolean {
-  const userRoles: FWCRole[] = Array.isArray(req.user?.roles) ? req.user.roles : []
-  return userRoles.some((r: FWCRole) => roles.includes(r))
+export function userHasRole(req: PayloadRequest, allowedRoles: IMARole[]): boolean {
+  const userRole = req.user?.role as IMARole | undefined
+  if (!userRole) return false
+
+  return allowedRoles.includes(userRole)
 }
 
 /**
- * Check if the user has at least the minimum required role
- * (e.g. leader can access member/student/viewer permissions)
+ * Check if the user has at least the minimum required role hierarchy
  */
-export function hasRoleAtLeast(req: PayloadRequest, minimum: FWCRole): boolean {
-  const userRoles: FWCRole[] = Array.isArray(req.user?.roles) ? req.user.roles : []
+export function hasRoleAtLeast(req: PayloadRequest, minimum: IMARole): boolean {
+  const userRole = req.user?.role as IMARole | undefined
+  if (!userRole) return false
 
-  return userRoles.some((r: FWCRole) => {
-    return ROLE_RANKING[r] <= ROLE_RANKING[minimum]
-  })
+  return ROLE_RANKING[userRole] <= ROLE_RANKING[minimum]
 }

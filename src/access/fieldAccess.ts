@@ -1,6 +1,6 @@
 // src/access/fieldAccess.ts
 import type { FieldAccess } from 'payload'
-import type { FWCRole } from './roles'
+import type { IMARole } from './roles'
 import { hasRoleAtLeast, isAdminRoute, getCurrentProfileId } from './control'
 
 /**
@@ -12,7 +12,7 @@ import { hasRoleAtLeast, isAdminRoute, getCurrentProfileId } from './control'
  * IMPORTANT:
  * FieldAccess must return boolean (NOT Where).
  */
-export function editableBySelfOrRole(minimum: FWCRole): FieldAccess {
+export function editableBySelfOrRole(minimum: IMARole): FieldAccess {
   return async ({ req, id }) => {
     if (!req.user) return false
     if (isAdminRoute(req)) return true
