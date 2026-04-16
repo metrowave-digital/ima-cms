@@ -1,0 +1,74 @@
+# ============================================
+# 1) BUILDER — Install deps + build Next.js + Payload Admin
+# ============================================
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+COPY tsconfig.json ./tsconfig.json
+
+# Install dependencies
+RUN pnpm install
+
+# Copy source files
+COPY src ./src
+COPY next.config.mjs ./
+COPY eslint.config.mjs ./
+COPY playwright.config.ts ./
+COPY vitest.config.mts ./
+COPY vitest.setup.ts ./
+
+# Copy Payload config
+COPY src/payload.config.ts ./src/payload.config.ts
+
+# Create an empty public folder in the container to ensure it exists
+# even if the host machine doesn't have one.
+RUN mkdir -p public
+
+# ERROR FIX: The source "public" folder is missing on your machine.
+# We've commented this out to allow the build to pass. 
+# Uncomment this line later if you add assets to a "public" folder.
+# COPY public ./public
+
+# Build Next.js (This includes the Payload Admin panel in modern versions)
+RUN pnpm build
+
+# REMOVED: pnpm payload:build
+# Reason: In Payload 3.0 / Next.js builds, the admin panel is built by "next build".
+# The "payload build" command does not exist in this version.
+
+
+# ============================================
+# 2) RUNNER — minimal image for production
+# ============================================
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+# Copy node_modules from builder
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy build output
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+# Note: The builder stage now has an empty /public folder (created by mkdir), 
+# so this copy command will work successfully even if source was missing.
+COPY --from=builder /app/public ./public
+
+# REMOVED: COPY --from=builder /app/build ./build
+# Reason: Since there is no separate payload build step, there is no ./build folder.
+
+ENV NODE_ENV=production
+EXPOSE 3000
+
+CMD ["pnpm", "start"]
