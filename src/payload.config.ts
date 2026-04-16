@@ -26,6 +26,12 @@ import { FestivalSubmissions } from './collections/FestivalSubmissions'
 import { AwardsSubmissions } from './collections/AwardsSubmissions'
 
 /* -------------------------
+ * HERITAGE BALL
+ * ------------------------- */
+
+import { BallCategories } from './collections/HeritageBall/BallCategories'
+
+/* -------------------------
  * GLOBALS
  * ------------------------- */
 import { Settings } from './globals/Settings'
@@ -141,6 +147,7 @@ export default buildConfig({
     Members,
     FestivalSubmissions,
     AwardsSubmissions,
+    BallCategories,
   ],
 
   /* ---- GLOBALS ---- */
