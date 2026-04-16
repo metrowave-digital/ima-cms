@@ -944,7 +944,6 @@ export interface Setting {
   id: number;
   siteName?: string | null;
   contactEmail?: string | null;
-  pathwaysDescription?: string | null;
   heroImage?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -956,7 +955,6 @@ export interface Setting {
 export interface SettingsSelect<T extends boolean = true> {
   siteName?: T;
   contactEmail?: T;
-  pathwaysDescription?: T;
   heroImage?: T;
   updatedAt?: T;
   createdAt?: T;

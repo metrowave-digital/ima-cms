@@ -36,9 +36,6 @@ import { BallCategories } from './collections/HeritageBall/BallCategories'
  * GLOBALS
  * ------------------------- */
 import { Settings } from './globals/Settings'
-import { resolveUserEndpoint } from './endpoints/resolveUser'
-import { updateProfileEndpoint } from './endpoints/updateProfile'
-import { uploadAvatarEndpoint } from './endpoints/uploadAvatar'
 
 /* -------------------------
  * PATH RESOLVING
@@ -154,9 +151,6 @@ export default buildConfig({
 
   /* ---- GLOBALS ---- */
   globals: [Settings],
-
-  /* ---- ENDPOINTS --- */
-  endpoints: [resolveUserEndpoint, updateProfileEndpoint, uploadAvatarEndpoint],
 
   /* ---- EDITOR ---- */
   editor: lexicalEditor(),

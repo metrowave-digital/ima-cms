@@ -18,12 +18,6 @@ export const SEOFields: Field[] = [
         label: 'Meta Description',
       },
       {
-        name: 'openGraphImage',
-        type: 'upload',
-        relationTo: 'sermons',
-        label: 'Open Graph Image',
-      },
-      {
         name: 'canonicalURL',
         type: 'text',
         label: 'Canonical URL',

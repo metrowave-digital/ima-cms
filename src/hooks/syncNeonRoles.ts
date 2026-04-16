@@ -1,11 +1,11 @@
 import type { PayloadRequest } from 'payload'
 import { updateNeonUserRoles } from '../lib/neonAuth'
-import type { FWCRole } from '../access/roles'
+import type { IMARole } from '../access/roles'
 
 type UserDoc = {
   id: string
   neonUserId?: string
-  roles?: FWCRole[]
+  roles?: IMARole[]
 }
 
 type HookArgs = {

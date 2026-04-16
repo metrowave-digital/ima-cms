@@ -19,16 +19,11 @@ export const Settings: GlobalConfig = {
     {
       name: 'siteName',
       type: 'text',
-      defaultValue: 'Freedom Worship Center',
+      defaultValue: 'Intercultural Media Alliance',
     },
     {
       name: 'contactEmail',
       type: 'email',
-    },
-    {
-      name: 'pathwaysDescription',
-      type: 'textarea',
-      label: 'Pathways Program Description',
     },
     {
       name: 'heroImage',
