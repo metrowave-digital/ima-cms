@@ -2,9 +2,15 @@ import type { CollectionConfig } from 'payload'
 
 export const BallCategories: CollectionConfig = {
   slug: 'ball-categories',
+  access: {
+    read: () => true,
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user),
+    delete: ({ req: { user } }) => Boolean(user),
+  },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'group', 'prizeAmount', 'trophyCount'],
+    defaultColumns: ['title', 'group', 'prizeAmount', 'scoringCriteria'],
   },
   fields: [
     {
@@ -12,15 +18,11 @@ export const BallCategories: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Category Title',
-      admin: {
-        description: 'e.g., Best Dressed Spectator - Archives, FF Realness Duo: FQ & Drag',
-      },
     },
     {
       name: 'group',
       type: 'select',
       required: true,
-      label: 'Category Group',
       options: [
         { label: 'Grand Prize', value: 'grand-prize' },
         { label: 'Fashion', value: 'fashion' },
@@ -30,6 +32,18 @@ export const BallCategories: CollectionConfig = {
         { label: 'Runway', value: 'runway' },
       ],
     },
+    // --- ADDED RELATIONSHIP FIELD ---
+    {
+      name: 'scoringCriteria',
+      type: 'relationship',
+      relationTo: 'scoring-criteria',
+      hasMany: true,
+      label: 'Applicable Scoring Criteria',
+      admin: {
+        position: 'sidebar', // Moves it to the right side in the UI for better organization
+        description: 'Select the criteria that will be used to judge this category.',
+      },
+    },
     {
       type: 'row',
       fields: [
@@ -37,18 +51,14 @@ export const BallCategories: CollectionConfig = {
           name: 'prizeAmount',
           type: 'number',
           label: 'Prize Amount ($)',
-          admin: {
-            width: '50%',
-          },
+          admin: { width: '50%' },
         },
         {
           name: 'trophyCount',
           type: 'number',
           label: 'Number of Trophies',
           min: 0,
-          admin: {
-            width: '50%',
-          },
+          admin: { width: '50%' },
         },
       ],
     },
@@ -57,26 +67,28 @@ export const BallCategories: CollectionConfig = {
       type: 'checkbox',
       label: 'Is this a Duo category?',
       defaultValue: false,
-      admin: {
-        description: 'Note: Duos cannot be in the same house for each duo category.',
-      },
     },
     {
       name: 'description',
       type: 'textarea',
       label: 'Theme / Description',
-      admin: {
-        description:
-          'Explain the aesthetic, theme, or cultural significance expected for this category.',
-      },
     },
     {
       name: 'requirements',
       type: 'richText',
       label: 'Specific Rules & Sub-Categories',
-      admin: {
-        description:
-          'Detail any specific breakdowns (e.g., Women vs FQ vs Drag vs Legend) or multi-part rules (e.g., Part 1 Production, Part 2 Crowning).',
+    },
+    {
+      name: 'externalNotes',
+      type: 'textarea',
+      label: 'External Notes',
+    },
+    {
+      name: 'internalNotes',
+      type: 'textarea',
+      label: 'Internal Notes',
+      access: {
+        read: ({ req: { user } }) => Boolean(user),
       },
     },
   ],

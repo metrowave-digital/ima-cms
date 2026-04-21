@@ -25,6 +25,7 @@ import { Members } from './collections/Members'
 import { FestivalSubmissions } from './collections/FestivalSubmissions'
 import { AwardsSubmissions } from './collections/AwardsSubmissions'
 import { Profiles } from './collections/Profiles'
+import { ScoringCriteria } from './collections/ScoringCriteria'
 
 /* -------------------------
  * HERITAGE BALL
@@ -147,6 +148,7 @@ export default buildConfig({
     AwardsSubmissions,
     BallCategories,
     Profiles,
+    ScoringCriteria,
   ],
 
   /* ---- GLOBALS ---- */
@@ -168,6 +170,7 @@ export default buildConfig({
     'https://festival.imanational.org',
     'https://learn.imanational.org',
     'https://cms.imanational.org',
+    'https://ima-cms.onrender.com',
   ],
   csrf: [
     'http://localhost:3000',
@@ -179,6 +182,7 @@ export default buildConfig({
     'https://festival.imanational.org',
     'https://learn.imanational.org',
     'https://cms.imanational.org',
+    'https://ima-cms.onrender.com',
   ],
 
   /* ---- TYPESCRIPT ---- */

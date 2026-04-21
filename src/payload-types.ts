@@ -80,6 +80,7 @@ export interface Config {
     'awards-submissions': AwardsSubmission;
     'ball-categories': BallCategory;
     profiles: Profile;
+    'scoring-criteria': ScoringCriterion;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -100,6 +101,7 @@ export interface Config {
     'awards-submissions': AwardsSubmissionsSelect<false> | AwardsSubmissionsSelect<true>;
     'ball-categories': BallCategoriesSelect<false> | BallCategoriesSelect<true>;
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
+    'scoring-criteria': ScoringCriteriaSelect<false> | ScoringCriteriaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -482,24 +484,16 @@ export interface AwardsSubmission {
  */
 export interface BallCategory {
   id: number;
-  /**
-   * e.g., Best Dressed Spectator - Archives, FF Realness Duo: FQ & Drag
-   */
   title: string;
   group: 'grand-prize' | 'fashion' | 'realness' | 'beauty-appeal' | 'performance' | 'runway';
+  /**
+   * Select the criteria that will be used to judge this category.
+   */
+  scoringCriteria?: (number | ScoringCriterion)[] | null;
   prizeAmount?: number | null;
   trophyCount?: number | null;
-  /**
-   * Note: Duos cannot be in the same house for each duo category.
-   */
   isDuoCategory?: boolean | null;
-  /**
-   * Explain the aesthetic, theme, or cultural significance expected for this category.
-   */
   description?: string | null;
-  /**
-   * Detail any specific breakdowns (e.g., Women vs FQ vs Drag vs Legend) or multi-part rules (e.g., Part 1 Production, Part 2 Crowning).
-   */
   requirements?: {
     root: {
       type: string;
@@ -515,6 +509,29 @@ export interface BallCategory {
     };
     [k: string]: unknown;
   } | null;
+  externalNotes?: string | null;
+  internalNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scoring-criteria".
+ */
+export interface ScoringCriterion {
+  id: number;
+  /**
+   * e.g., Technique, Creativity, Stage Presence
+   */
+  title: string;
+  /**
+   * Which industry/context does this criteria apply to?
+   */
+  association: ('ballroom' | 'film')[];
+  /**
+   * Explain what judges should look for when scoring this specific criteria.
+   */
+  description?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -593,6 +610,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'profiles';
         value: number | Profile;
+      } | null)
+    | ({
+        relationTo: 'scoring-criteria';
+        value: number | ScoringCriterion;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -866,11 +887,14 @@ export interface AwardsSubmissionsSelect<T extends boolean = true> {
 export interface BallCategoriesSelect<T extends boolean = true> {
   title?: T;
   group?: T;
+  scoringCriteria?: T;
   prizeAmount?: T;
   trophyCount?: T;
   isDuoCategory?: T;
   description?: T;
   requirements?: T;
+  externalNotes?: T;
+  internalNotes?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -893,6 +917,17 @@ export interface ProfilesSelect<T extends boolean = true> {
         twitter?: T;
         vimeo?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scoring-criteria_select".
+ */
+export interface ScoringCriteriaSelect<T extends boolean = true> {
+  title?: T;
+  association?: T;
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
 }
