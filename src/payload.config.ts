@@ -179,6 +179,8 @@ export default buildConfig({
     'https://cms.imanational.org',
     'https://ima-cms.onrender.com',
     'https://imaheritageball.org',
+    'https://www.imanational.org',
+    'https://heritage-ball-git-main-intercultural-media-alliances-projects.vercel.app',
   ],
   csrf: [
     'http://localhost:3000',
@@ -192,6 +194,8 @@ export default buildConfig({
     'https://cms.imanational.org',
     'https://ima-cms.onrender.com',
     'https://imaheritageball.org',
+    'https://www.imanational.org',
+    'https://heritage-ball-git-main-intercultural-media-alliances-projects.vercel.app',
   ],
 
   /* ---- TYPESCRIPT ---- */
