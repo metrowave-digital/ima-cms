@@ -42,6 +42,7 @@ import { HeaderNavigation } from './globals/HeaderNavigation'
 import { Settings } from './globals/Settings'
 import { SitePopup } from './globals/SitePopup'
 import { HeaderTicker } from './globals/HeaderTicker'
+import { HeaderActions } from './globals/HeaderActions'
 
 /* -------------------------
  * PATH RESOLVING
@@ -158,7 +159,7 @@ export default buildConfig({
   ],
 
   /* ---- GLOBALS ---- */
-  globals: [Settings, HeaderNavigation, FooterNavigation, SitePopup, HeaderTicker],
+  globals: [Settings, HeaderNavigation, FooterNavigation, SitePopup, HeaderTicker, HeaderActions],
 
   /* ---- EDITOR ---- */
   editor: lexicalEditor(),

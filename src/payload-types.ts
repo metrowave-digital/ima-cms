@@ -118,6 +118,7 @@ export interface Config {
     'footer-navigation': FooterNavigation;
     'site-popup': SitePopup;
     'header-ticker': HeaderTicker;
+    'header-actions': HeaderAction;
   };
   globalsSelect: {
     settings: SettingsSelect<false> | SettingsSelect<true>;
@@ -125,6 +126,7 @@ export interface Config {
     'footer-navigation': FooterNavigationSelect<false> | FooterNavigationSelect<true>;
     'site-popup': SitePopupSelect<false> | SitePopupSelect<true>;
     'header-ticker': HeaderTickerSelect<false> | HeaderTickerSelect<true>;
+    'header-actions': HeaderActionsSelect<false> | HeaderActionsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -1281,6 +1283,35 @@ export interface HeaderTicker {
   createdAt?: string | null;
 }
 /**
+ * Manage the Call-To-Action (CTA) buttons displayed on the right side of the main navigation bar.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header-actions".
+ */
+export interface HeaderAction {
+  id: number;
+  /**
+   * Configure CTAs independently for each site.
+   */
+  siteActions?:
+    | {
+        site: 'ima' | 'heritage-ball' | 'imf' | 'gala';
+        buttons?:
+          | {
+              label: string;
+              url: string;
+              variant?: ('primary' | 'outline') | null;
+              newTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings_select".
  */
@@ -1489,6 +1520,30 @@ export interface HeaderTickerSelect<T extends boolean = true> {
           | {
               backgroundColorHex?: T;
               textColorHex?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header-actions_select".
+ */
+export interface HeaderActionsSelect<T extends boolean = true> {
+  siteActions?:
+    | T
+    | {
+        site?: T;
+        buttons?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              variant?: T;
+              newTab?: T;
+              id?: T;
             };
         id?: T;
       };
