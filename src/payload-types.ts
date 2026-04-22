@@ -81,6 +81,7 @@ export interface Config {
     'ball-categories': BallCategory;
     profiles: Profile;
     'scoring-criteria': ScoringCriterion;
+    'ball-scoring-criteria': BallScoringCriterion;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -102,6 +103,7 @@ export interface Config {
     'ball-categories': BallCategoriesSelect<false> | BallCategoriesSelect<true>;
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     'scoring-criteria': ScoringCriteriaSelect<false> | ScoringCriteriaSelect<true>;
+    'ball-scoring-criteria': BallScoringCriteriaSelect<false> | BallScoringCriteriaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -112,9 +114,13 @@ export interface Config {
   };
   globals: {
     settings: Setting;
+    'header-navigation': HeaderNavigation;
+    'footer-navigation': FooterNavigation;
   };
   globalsSelect: {
     settings: SettingsSelect<false> | SettingsSelect<true>;
+    'header-navigation': HeaderNavigationSelect<false> | HeaderNavigationSelect<true>;
+    'footer-navigation': FooterNavigationSelect<false> | FooterNavigationSelect<true>;
   };
   locale: null;
   user: User & {
@@ -489,7 +495,7 @@ export interface BallCategory {
   /**
    * Select the criteria that will be used to judge this category.
    */
-  scoringCriteria?: (number | ScoringCriterion)[] | null;
+  scoringCriteria?: (number | BallScoringCriterion)[] | null;
   prizeAmount?: number | null;
   trophyCount?: number | null;
   isDuoCategory?: boolean | null;
@@ -511,6 +517,34 @@ export interface BallCategory {
   } | null;
   externalNotes?: string | null;
   internalNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Manage the weighted rubrics used by judges for specific category groups.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ball-scoring-criteria".
+ */
+export interface BallScoringCriterion {
+  id: number;
+  /**
+   * e.g., "Mr. & Miss IMA (Best Dressed Duo)", "Fashion Categories"
+   */
+  title: string;
+  targetCategoryGroup: 'grand-prize' | 'fashion' | 'realness' | 'beauty-appeal' | 'performance' | 'runway';
+  instructions?: string | null;
+  rubric?:
+    | {
+        criterionName: string;
+        weight: number;
+        /**
+         * Briefly explain what judges should look for in this specific criterion.
+         */
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -614,6 +648,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'scoring-criteria';
         value: number | ScoringCriterion;
+      } | null)
+    | ({
+        relationTo: 'ball-scoring-criteria';
+        value: number | BallScoringCriterion;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -933,6 +971,25 @@ export interface ScoringCriteriaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ball-scoring-criteria_select".
+ */
+export interface BallScoringCriteriaSelect<T extends boolean = true> {
+  title?: T;
+  targetCategoryGroup?: T;
+  instructions?: T;
+  rubric?:
+    | T
+    | {
+        criterionName?: T;
+        weight?: T;
+        description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -972,14 +1029,157 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Global configuration and site-specific overrides for the IMA network.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings".
  */
 export interface Setting {
   id: number;
-  siteName?: string | null;
-  contactEmail?: string | null;
-  heroImage?: (number | null) | Media;
+  globalOrgName: string;
+  contactEmail: string;
+  contactPhone?: string | null;
+  globalMailingAddress?: string | null;
+  /**
+   * Fallback hero image if a site-specific one is not provided.
+   */
+  defaultHeroImage?: (number | null) | Media;
+  sites?:
+    | {
+        siteId: 'ima' | 'heritage-ball' | 'imf' | 'gala';
+        siteName: string;
+        logoLight?: (number | null) | Media;
+        logoDark?: (number | null) | Media;
+        favicon?: (number | null) | Media;
+        seo?: {
+          metaTitle?: string | null;
+          metaDescription?: string | null;
+          ogImage?: (number | null) | Media;
+        };
+        systemState?: {
+          maintenanceMode?: boolean | null;
+          maintenanceMessage?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  googleAnalyticsId?: string | null;
+  metaPixelId?: string | null;
+  /**
+   * Your project token (starts with phc_...)
+   */
+  posthogApiKey?: string | null;
+  /**
+   * Usually https://us.i.posthog.com or https://eu.i.posthog.com
+   */
+  posthogHostUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header-navigation".
+ */
+export interface HeaderNavigation {
+  id: number;
+  /**
+   * Create a distinct navigation bar for each individual site.
+   */
+  siteNavigations?:
+    | {
+        site: 'ima' | 'heritage-ball' | 'imf' | 'gala';
+        items?:
+          | {
+              label: string;
+              type?: ('link' | 'dropdown' | 'megaMenu') | null;
+              url?: string | null;
+              newTab?: boolean | null;
+              children?:
+                | {
+                    label: string;
+                    url: string;
+                    newTab?: boolean | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              megaMenu?: {
+                columns?:
+                  | {
+                      title?: string | null;
+                      links?:
+                        | {
+                            label: string;
+                            url: string;
+                            description?: string | null;
+                            id?: string | null;
+                          }[]
+                        | null;
+                      id?: string | null;
+                    }[]
+                  | null;
+                /**
+                 * Optional featured block to sit alongside the mega menu columns.
+                 */
+                featuredCallout?: {
+                  title?: string | null;
+                  description?: string | null;
+                  image?: (number | null) | Media;
+                  callToActionUrl?: string | null;
+                  callToActionLabel?: string | null;
+                };
+              };
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer-navigation".
+ */
+export interface FooterNavigation {
+  id: number;
+  /**
+   * Configure the footer structure independently for each site.
+   */
+  siteFooters?:
+    | {
+        site: 'ima' | 'heritage-ball' | 'imf' | 'gala';
+        columns?:
+          | {
+              title: string;
+              links?:
+                | {
+                    label: string;
+                    url: string;
+                    newTab?: boolean | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        socialLinks?:
+          | {
+              platform: 'instagram' | 'twitter' | 'facebook' | 'linkedin' | 'tiktok' | 'youtube';
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        bottomLegalLinks?:
+          | {
+              label: string;
+              url: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -988,9 +1188,140 @@ export interface Setting {
  * via the `definition` "settings_select".
  */
 export interface SettingsSelect<T extends boolean = true> {
-  siteName?: T;
+  globalOrgName?: T;
   contactEmail?: T;
-  heroImage?: T;
+  contactPhone?: T;
+  globalMailingAddress?: T;
+  defaultHeroImage?: T;
+  sites?:
+    | T
+    | {
+        siteId?: T;
+        siteName?: T;
+        logoLight?: T;
+        logoDark?: T;
+        favicon?: T;
+        seo?:
+          | T
+          | {
+              metaTitle?: T;
+              metaDescription?: T;
+              ogImage?: T;
+            };
+        systemState?:
+          | T
+          | {
+              maintenanceMode?: T;
+              maintenanceMessage?: T;
+            };
+        id?: T;
+      };
+  googleAnalyticsId?: T;
+  metaPixelId?: T;
+  posthogApiKey?: T;
+  posthogHostUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header-navigation_select".
+ */
+export interface HeaderNavigationSelect<T extends boolean = true> {
+  siteNavigations?:
+    | T
+    | {
+        site?: T;
+        items?:
+          | T
+          | {
+              label?: T;
+              type?: T;
+              url?: T;
+              newTab?: T;
+              children?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    newTab?: T;
+                    id?: T;
+                  };
+              megaMenu?:
+                | T
+                | {
+                    columns?:
+                      | T
+                      | {
+                          title?: T;
+                          links?:
+                            | T
+                            | {
+                                label?: T;
+                                url?: T;
+                                description?: T;
+                                id?: T;
+                              };
+                          id?: T;
+                        };
+                    featuredCallout?:
+                      | T
+                      | {
+                          title?: T;
+                          description?: T;
+                          image?: T;
+                          callToActionUrl?: T;
+                          callToActionLabel?: T;
+                        };
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer-navigation_select".
+ */
+export interface FooterNavigationSelect<T extends boolean = true> {
+  siteFooters?:
+    | T
+    | {
+        site?: T;
+        columns?:
+          | T
+          | {
+              title?: T;
+              links?:
+                | T
+                | {
+                    label?: T;
+                    url?: T;
+                    newTab?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        socialLinks?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              id?: T;
+            };
+        bottomLegalLinks?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

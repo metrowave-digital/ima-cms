@@ -36,7 +36,7 @@ export const BallCategories: CollectionConfig = {
     {
       name: 'scoringCriteria',
       type: 'relationship',
-      relationTo: 'scoring-criteria',
+      relationTo: 'ball-scoring-criteria',
       hasMany: true,
       label: 'Applicable Scoring Criteria',
       admin: {

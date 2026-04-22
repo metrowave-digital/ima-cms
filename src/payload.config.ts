@@ -32,10 +32,13 @@ import { ScoringCriteria } from './collections/ScoringCriteria'
  * ------------------------- */
 
 import { BallCategories } from './collections/HeritageBall/BallCategories'
+import { BallScoringCriteria } from './collections/HeritageBall/BallScoringCriteria'
 
 /* -------------------------
  * GLOBALS
  * ------------------------- */
+import { FooterNavigation } from './globals/FooterNavigation'
+import { HeaderNavigation } from './globals/HeaderNavigation'
 import { Settings } from './globals/Settings'
 
 /* -------------------------
@@ -149,10 +152,11 @@ export default buildConfig({
     BallCategories,
     Profiles,
     ScoringCriteria,
+    BallScoringCriteria,
   ],
 
   /* ---- GLOBALS ---- */
-  globals: [Settings],
+  globals: [Settings, HeaderNavigation, FooterNavigation],
 
   /* ---- EDITOR ---- */
   editor: lexicalEditor(),
