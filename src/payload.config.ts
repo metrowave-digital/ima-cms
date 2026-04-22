@@ -178,6 +178,7 @@ export default buildConfig({
     'https://learn.imanational.org',
     'https://cms.imanational.org',
     'https://ima-cms.onrender.com',
+    'https://imaheritageball.org',
   ],
   csrf: [
     'http://localhost:3000',
@@ -190,6 +191,7 @@ export default buildConfig({
     'https://learn.imanational.org',
     'https://cms.imanational.org',
     'https://ima-cms.onrender.com',
+    'https://imaheritageball.org',
   ],
 
   /* ---- TYPESCRIPT ---- */
