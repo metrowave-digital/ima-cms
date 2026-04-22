@@ -3,17 +3,14 @@ import type { GlobalConfig } from 'payload'
 export const FooterNavigation: GlobalConfig = {
   slug: 'footer-navigation',
   label: 'Footer Navigation',
-  access: {
-    read: () => true,
-  },
+  access: { read: () => true },
   fields: [
     {
       name: 'siteFooters',
       type: 'array',
       label: 'Site Footers',
-      admin: {
-        description: 'Configure the footer structure independently for each site.',
-      },
+      dbName: 'footers', // <--- FIX
+      admin: { description: 'Configure the footer structure independently for each site.' },
       fields: [
         {
           name: 'site',
@@ -31,12 +28,14 @@ export const FooterNavigation: GlobalConfig = {
           name: 'columns',
           type: 'array',
           label: 'Link Columns',
+          dbName: 'cols', // <--- FIX
           maxRows: 4,
           fields: [
             { name: 'title', type: 'text', required: true, label: 'Column Title' },
             {
               name: 'links',
               type: 'array',
+              dbName: 'links', // <--- FIX
               fields: [
                 {
                   type: 'row',
@@ -54,6 +53,7 @@ export const FooterNavigation: GlobalConfig = {
           name: 'socialLinks',
           type: 'array',
           label: 'Social Media Icons',
+          dbName: 'socials', // <--- FIX
           fields: [
             {
               name: 'platform',
@@ -74,7 +74,8 @@ export const FooterNavigation: GlobalConfig = {
         {
           name: 'bottomLegalLinks',
           type: 'array',
-          label: 'Bottom Legal Links (Privacy, Terms, etc.)',
+          label: 'Bottom Legal Links',
+          dbName: 'legal', // <--- FIX
           fields: [
             {
               type: 'row',

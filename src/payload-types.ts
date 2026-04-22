@@ -116,11 +116,15 @@ export interface Config {
     settings: Setting;
     'header-navigation': HeaderNavigation;
     'footer-navigation': FooterNavigation;
+    'site-popup': SitePopup;
+    'header-ticker': HeaderTicker;
   };
   globalsSelect: {
     settings: SettingsSelect<false> | SettingsSelect<true>;
     'header-navigation': HeaderNavigationSelect<false> | HeaderNavigationSelect<true>;
     'footer-navigation': FooterNavigationSelect<false> | FooterNavigationSelect<true>;
+    'site-popup': SitePopupSelect<false> | SitePopupSelect<true>;
+    'header-ticker': HeaderTickerSelect<false> | HeaderTickerSelect<true>;
   };
   locale: null;
   user: User & {
@@ -1117,9 +1121,6 @@ export interface HeaderNavigation {
                       id?: string | null;
                     }[]
                   | null;
-                /**
-                 * Optional featured block to sit alongside the mega menu columns.
-                 */
                 featuredCallout?: {
                   title?: string | null;
                   description?: string | null;
@@ -1177,6 +1178,102 @@ export interface FooterNavigation {
               id?: string | null;
             }[]
           | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Manage modal popups for newsletter signups, ticket sales, or major announcements across the IMA network.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-popup".
+ */
+export interface SitePopup {
+  id: number;
+  /**
+   * Configure popups independently for each site.
+   */
+  sitePopups?:
+    | {
+        site: 'ima' | 'heritage-ball' | 'imf' | 'gala';
+        isActive?: boolean | null;
+        displayRules?: {
+          showOn?: ('all' | 'specific') | null;
+          /**
+           * Enter the exact URL paths where this popup should appear. (e.g., "/" for Home, "/categories" for the Roster page).
+           */
+          targetPaths?:
+            | {
+                path: string;
+                id?: string | null;
+              }[]
+            | null;
+          frequency?: ('always' | 'once-per-session' | 'once-ever') | null;
+          /**
+           * How long to wait before showing the popup.
+           */
+          delaySeconds?: number | null;
+        };
+        content: {
+          image?: (number | null) | Media;
+          title: string;
+          description?: string | null;
+          ctaLabel?: string | null;
+          ctaUrl?: string | null;
+          /**
+           * If checked, your Next.js frontend should render an email input form instead of a standard button.
+           */
+          isNewsletterSignup?: boolean | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Manage the scrolling announcement marquee at the top of each site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header-ticker".
+ */
+export interface HeaderTicker {
+  id: number;
+  /**
+   * Create and manage tickers independently for each site in the network.
+   */
+  siteTickers?:
+    | {
+        site: 'ima' | 'heritage-ball' | 'imf' | 'gala';
+        isActive?: boolean | null;
+        /**
+         * Add the text phrases that will continuously scroll across the screen (e.g., "Legends Never Die"). They will be separated by a decorative star/icon on the frontend.
+         */
+        messages?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * If provided, clicking anywhere on the scrolling marquee will redirect the user.
+         */
+        link?: {
+          url?: string | null;
+          newTab?: boolean | null;
+        };
+        appearance?: {
+          /**
+           * e.g., #FFE74C. Leave blank to use site default.
+           */
+          backgroundColorHex?: string | null;
+          /**
+           * e.g., #170F11. Leave blank to use site default.
+           */
+          textColorHex?: string | null;
+        };
         id?: string | null;
       }[]
     | null;
@@ -1319,6 +1416,79 @@ export interface FooterNavigationSelect<T extends boolean = true> {
               label?: T;
               url?: T;
               id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-popup_select".
+ */
+export interface SitePopupSelect<T extends boolean = true> {
+  sitePopups?:
+    | T
+    | {
+        site?: T;
+        isActive?: T;
+        displayRules?:
+          | T
+          | {
+              showOn?: T;
+              targetPaths?:
+                | T
+                | {
+                    path?: T;
+                    id?: T;
+                  };
+              frequency?: T;
+              delaySeconds?: T;
+            };
+        content?:
+          | T
+          | {
+              image?: T;
+              title?: T;
+              description?: T;
+              ctaLabel?: T;
+              ctaUrl?: T;
+              isNewsletterSignup?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header-ticker_select".
+ */
+export interface HeaderTickerSelect<T extends boolean = true> {
+  siteTickers?:
+    | T
+    | {
+        site?: T;
+        isActive?: T;
+        messages?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        link?:
+          | T
+          | {
+              url?: T;
+              newTab?: T;
+            };
+        appearance?:
+          | T
+          | {
+              backgroundColorHex?: T;
+              textColorHex?: T;
             };
         id?: T;
       };

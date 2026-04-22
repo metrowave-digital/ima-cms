@@ -4,13 +4,15 @@ export const HeaderNavigation: GlobalConfig = {
   slug: 'header-navigation',
   label: 'Header Navigation',
   access: {
-    read: () => true, // Publicly readable for the frontend
+    read: () => true,
   },
   fields: [
     {
       name: 'siteNavigations',
       type: 'array',
       label: 'Site Navigations',
+      // FIX: Shortens the DB table prefix
+      dbName: 'site_navs',
       admin: {
         description: 'Create a distinct navigation bar for each individual site.',
       },
@@ -31,6 +33,8 @@ export const HeaderNavigation: GlobalConfig = {
           name: 'items',
           type: 'array',
           label: 'Navigation Items',
+          // FIX: Shortens the DB table prefix
+          dbName: 'nav_items',
           fields: [
             {
               name: 'label',
@@ -75,6 +79,8 @@ export const HeaderNavigation: GlobalConfig = {
               name: 'children',
               type: 'array',
               label: 'Dropdown Links',
+              // FIX: Shortens the DB table prefix
+              dbName: 'nav_children',
               admin: {
                 condition: (_, siblingData) => siblingData.type === 'dropdown',
               },
@@ -101,13 +107,17 @@ export const HeaderNavigation: GlobalConfig = {
                 {
                   name: 'columns',
                   type: 'array',
-                  maxRows: 4, // Prevents the mega menu from breaking layout
+                  maxRows: 4,
                   label: 'Menu Columns',
+                  // FIX: Shortens the DB table prefix
+                  dbName: 'mm_cols',
                   fields: [
                     { name: 'title', type: 'text', label: 'Column Title (Optional)' },
                     {
                       name: 'links',
                       type: 'array',
+                      // FIX: Shortens the DB table prefix
+                      dbName: 'mm_links',
                       fields: [
                         { name: 'label', type: 'text', required: true },
                         { name: 'url', type: 'text', required: true },
@@ -124,13 +134,10 @@ export const HeaderNavigation: GlobalConfig = {
                   name: 'featuredCallout',
                   type: 'group',
                   label: 'Featured Content / Callout',
-                  admin: {
-                    description: 'Optional featured block to sit alongside the mega menu columns.',
-                  },
                   fields: [
                     { name: 'title', type: 'text' },
                     { name: 'description', type: 'textarea' },
-                    { name: 'image', type: 'upload', relationTo: 'media' }, // Ensure your media collection slug is 'media'
+                    { name: 'image', type: 'upload', relationTo: 'media' },
                     { name: 'callToActionUrl', type: 'text', label: 'Call to Action URL' },
                     { name: 'callToActionLabel', type: 'text', label: 'Call to Action Label' },
                   ],

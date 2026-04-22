@@ -40,6 +40,8 @@ import { BallScoringCriteria } from './collections/HeritageBall/BallScoringCrite
 import { FooterNavigation } from './globals/FooterNavigation'
 import { HeaderNavigation } from './globals/HeaderNavigation'
 import { Settings } from './globals/Settings'
+import { SitePopup } from './globals/SitePopup'
+import { HeaderTicker } from './globals/HeaderTicker'
 
 /* -------------------------
  * PATH RESOLVING
@@ -156,7 +158,7 @@ export default buildConfig({
   ],
 
   /* ---- GLOBALS ---- */
-  globals: [Settings, HeaderNavigation, FooterNavigation],
+  globals: [Settings, HeaderNavigation, FooterNavigation, SitePopup, HeaderTicker],
 
   /* ---- EDITOR ---- */
   editor: lexicalEditor(),
