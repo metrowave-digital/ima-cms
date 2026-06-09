@@ -47,8 +47,7 @@ export const HeaderTicker: GlobalConfig = {
           label: 'Ticker Messages',
           minRows: 1,
           admin: {
-            description:
-              'Add the text phrases that will continuously scroll across the screen (e.g., "Legends Never Die"). They will be separated by a decorative star/icon on the frontend.',
+            description: 'Add the text phrases that will continuously scroll across the screen (e.g., "Legends Never Die"). They will be separated by a decorative star/icon on the frontend.',
           },
           fields: [
             {
@@ -64,20 +63,14 @@ export const HeaderTicker: GlobalConfig = {
           type: 'group',
           label: 'Clickable Link (Optional)',
           admin: {
-            description:
-              'If provided, clicking anywhere on the scrolling marquee will redirect the user.',
+            description: 'If provided, clicking anywhere on the scrolling marquee will redirect the user.',
           },
           fields: [
             {
               type: 'row',
               fields: [
                 { name: 'url', type: 'text', label: 'Destination URL', admin: { width: '50%' } },
-                {
-                  name: 'newTab',
-                  type: 'checkbox',
-                  label: 'Open in new tab?',
-                  admin: { width: '50%' },
-                },
+                { name: 'newTab', type: 'checkbox', label: 'Open in new tab?', admin: { width: '50%' } },
               ],
             },
           ],
@@ -94,19 +87,13 @@ export const HeaderTicker: GlobalConfig = {
                   name: 'backgroundColorHex',
                   type: 'text',
                   label: 'Background Color (Hex)',
-                  admin: {
-                    description: 'e.g., #FFE74C. Leave blank to use site default.',
-                    width: '50%',
-                  },
+                  admin: { description: 'e.g., #FFE74C. Leave blank to use site default.', width: '50%' },
                 },
                 {
                   name: 'textColorHex',
                   type: 'text',
                   label: 'Text Color (Hex)',
-                  admin: {
-                    description: 'e.g., #170F11. Leave blank to use site default.',
-                    width: '50%',
-                  },
+                  admin: { description: 'e.g., #170F11. Leave blank to use site default.', width: '50%' },
                 },
               ],
             },

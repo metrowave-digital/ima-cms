@@ -35,6 +35,12 @@ import { BallCategories } from './collections/HeritageBall/BallCategories'
 import { BallScoringCriteria } from './collections/HeritageBall/BallScoringCriteria'
 
 /* -------------------------
+ * PEOPLE
+ * ------------------------- */
+
+import { TeamMembers } from './collections/People/TeamMembers'
+
+/* -------------------------
  * GLOBALS
  * ------------------------- */
 import { FooterNavigation } from './globals/FooterNavigation'
@@ -156,6 +162,7 @@ export default buildConfig({
     Profiles,
     ScoringCriteria,
     BallScoringCriteria,
+    TeamMembers,
   ],
 
   /* ---- GLOBALS ---- */

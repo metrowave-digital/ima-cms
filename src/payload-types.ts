@@ -82,6 +82,7 @@ export interface Config {
     profiles: Profile;
     'scoring-criteria': ScoringCriterion;
     'ball-scoring-criteria': BallScoringCriterion;
+    'team-members': TeamMember;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -104,6 +105,7 @@ export interface Config {
     profiles: ProfilesSelect<false> | ProfilesSelect<true>;
     'scoring-criteria': ScoringCriteriaSelect<false> | ScoringCriteriaSelect<true>;
     'ball-scoring-criteria': BallScoringCriteriaSelect<false> | BallScoringCriteriaSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -576,6 +578,110 @@ export interface ScoringCriterion {
   createdAt: string;
 }
 /**
+ * Manage public team, leadership, board, advisor, volunteer, and creative partner profiles.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  fullName: string;
+  /**
+   * Used for the public profile URL: /team/[slug].
+   */
+  slug: string;
+  /**
+   * Turn this off to hide the team member from public frontend pages without deleting the profile.
+   */
+  isActive?: boolean | null;
+  /**
+   * Lower numbers appear first. Example: 1 appears before 10.
+   */
+  displayOrder?: number | null;
+  /**
+   * Controls whether this profile appears in the Leadership section on the About page.
+   */
+  showOnLeadershipSection?: boolean | null;
+  profileType:
+    | 'leadership'
+    | 'board-member'
+    | 'staff'
+    | 'advisor'
+    | 'volunteer'
+    | 'teaching-artist'
+    | 'creative-partner'
+    | 'founder';
+  roleTitle: string;
+  /**
+   * Use this to group team members by area of responsibility.
+   */
+  department?:
+    | (
+        | 'executive-leadership'
+        | 'media-storytelling'
+        | 'film-production'
+        | 'arts-culture'
+        | 'education-training'
+        | 'community-engagement'
+        | 'development-partnerships'
+        | 'operations'
+        | 'board-governance'
+      )
+    | null;
+  /**
+   * Recommended: square or portrait image. The frontend can crop it as needed.
+   */
+  headshot: number | Media;
+  location?: string | null;
+  /**
+   * Brief summary for cards, grids, previews, and the About page.
+   */
+  shortBio: string;
+  /**
+   * Full plain-text biography for the individual profile page.
+   */
+  longBio: string;
+  /**
+   * Optional. Only add this if it should be visible on the public website.
+   */
+  email?: string | null;
+  /**
+   * Optional. Only add this if it should be visible on the public website.
+   */
+  phone?: string | null;
+  socialLinks?:
+    | {
+        platform:
+          | 'website'
+          | 'instagram'
+          | 'facebook'
+          | 'linkedin'
+          | 'x'
+          | 'youtube'
+          | 'tiktok'
+          | 'vimeo'
+          | 'imdb'
+          | 'other';
+        label?: string | null;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  seo?: {
+    title?: string | null;
+    /**
+     * Optional meta description for the public profile page.
+     */
+    description?: string | null;
+    /**
+     * Optional social sharing image. If empty, the headshot can be used on the frontend.
+     */
+    image?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -658,6 +764,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'ball-scoring-criteria';
         value: number | BallScoringCriterion;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -990,6 +1100,43 @@ export interface BallScoringCriteriaSelect<T extends boolean = true> {
         weight?: T;
         description?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  fullName?: T;
+  slug?: T;
+  isActive?: T;
+  displayOrder?: T;
+  showOnLeadershipSection?: T;
+  profileType?: T;
+  roleTitle?: T;
+  department?: T;
+  headshot?: T;
+  location?: T;
+  shortBio?: T;
+  longBio?: T;
+  email?: T;
+  phone?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
       };
   updatedAt?: T;
   createdAt?: T;
