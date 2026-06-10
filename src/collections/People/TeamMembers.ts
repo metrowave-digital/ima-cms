@@ -199,6 +199,38 @@ export const TeamMembers: CollectionConfig = {
               },
             },
             {
+              name: 'committees',
+              label: 'Committee Assignments',
+              type: 'array',
+              labels: {
+                singular: 'Committee Assignment',
+                plural: 'Committee Assignments',
+              },
+              admin: {
+                description: 'Add one or more committee assignments for this team member.',
+              },
+              fields: [
+                {
+                  name: 'position',
+                  label: 'Position',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    placeholder: 'Chair, Co-Chair, Secretary, Member...',
+                  },
+                },
+                {
+                  name: 'committeeName',
+                  label: 'Committee Name',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    placeholder: 'Governance Committee, Finance Committee...',
+                  },
+                },
+              ],
+            },
+            {
               name: 'headshot',
               label: 'Headshot',
               type: 'upload',

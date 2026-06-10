@@ -629,6 +629,16 @@ export interface TeamMember {
       )
     | null;
   /**
+   * Add one or more committee assignments for this team member.
+   */
+  committees?:
+    | {
+        position: string;
+        committeeName: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Recommended: square or portrait image. The frontend can crop it as needed.
    */
   headshot: number | Media;
@@ -1117,6 +1127,13 @@ export interface TeamMembersSelect<T extends boolean = true> {
   profileType?: T;
   roleTitle?: T;
   department?: T;
+  committees?:
+    | T
+    | {
+        position?: T;
+        committeeName?: T;
+        id?: T;
+      };
   headshot?: T;
   location?: T;
   shortBio?: T;
